@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Blood Group Prediction</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.js"></script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: url("{{ url_for('static', filename='finger1.jpg') }}") no-repeat center center / cover;
+      min-height: 100vh;
+      color: #E3F2FD;
+      display: flex;
+      flex-direction: column;
+    }
+    /* .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(10, 15, 40, 0.85);
+      z-index: 0;
+    } */
+    .custom-card {
+      position: relative;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(12px);
+      border-radius: 18px;
+      padding: 2rem;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.6);
+      z-index: 1;
+      text-align: center;
+      animation: fadeIn 1.2s ease-in-out;
+    }
+    .upload-area {
+      background: rgba(255, 255, 255, 0.03);
+      border: 2px dashed rgba(255, 255, 255, 0.1);
+      transition: background 0.3s ease;
+    }
+    .upload-area:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+    .btn-accent {
+      background: linear-gradient(90deg, #4FC3F7, #2196F3);
+      color: #0D1B2A;
+      font-weight: 600;
+    }
+    .btn-accent:hover {
+      background: linear-gradient(90deg, #29B6F6, #1976D2);
+    }
+    .text-accent {
+      color: #4FC3F7;
+    }
+    .glow-ring {
+      animation: pulse-glow 2s infinite;
+    }
+    @keyframes pulse-glow {
+      0%,100% { box-shadow: 0 0 0px rgba(79,195,247,0.4);}
+      50% { box-shadow: 0 0 18px rgba(79,195,247,0.8);}
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px);}
+      to { opacity: 1; transform: translateY(0);}
+    }
+  </style>
+</head>
+<body>
+  <div class="overlay"></div>
+
+
+ <!-- Navbar -->
+<nav class="fixed w-full z-50 shadow-md" style="background-color: #0A132E;">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+      
+      <!-- Logo + Title -->
+      <div class="flex items-center gap-2">
+        <!-- Red blood droplet -->
+        <i data-lucide="droplet" class="text-red-600" style="width: 26px; height: 26px;"></i>
+
+        <!-- Dark blue text with white border -->
+        <span class="font-bold text-2xl relative"
+              style="color: #1E3A8A; /* dark blue */
+                     text-shadow: -1px -1px 0 #fff,  
+                                  1px -1px 0 #fff,  
+                                 -1px  1px 0 #fff,  
+                                  1px  1px 0 #fff;">
+          BloodPrint
+        </span>
+      </div>
+
+      {% if 'user_id' in session %}
+      <div class="flex items-center gap-4">
+        <span class="text-sm text-blue-300">{{ username }}</span>
+        <a href="{{ url_for('logout') }}" class="bg-orange-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition">
+          Logout
+        </a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</nav>
+
+
+  <!-- Prediction Section -->
+  <section class="relative flex items-center justify-center w-full pt-28 pb-12 px-4">
+    <div class="custom-card max-w-md w-full">
+      <h2 class="text-2xl font-bold text-accent mb-2">Upload Fingerprint</h2>
+      <p class="text-sm text-blue-200 mb-5">AI will predict your blood group from your fingerprint image.</p>
+
+      <div class="upload-area p-5 rounded-lg flex flex-col items-center justify-center space-y-4">
+        <!-- Preview -->
+        <div id="imagePreview" class="glow-ring relative w-28 h-28 flex items-center justify-center overflow-hidden bg-black border border-blue-400 rounded-lg shadow-md">
+          <p id="noImageText" class="text-blue-300 text-xs text-center">No Image<br>Selected</p>
+          <img id="previewImage" src="" alt="Preview" class="hidden w-full h-full object-cover"/>
+        </div>
+
+        <!-- Upload -->
+        <label for="fileInput" class="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg shadow transition text-sm font-medium">
+          Choose Image
+        </label>
+        <input id="fileInput" type="file" accept="image/*" onchange="handleImageChange(event)" class="hidden"/>
+
+        <!-- Predict -->
+        <button id="predictButton" class="btn-accent py-2 px-6 rounded-lg shadow-md transition text-sm">
+          Predict Blood Group
+        </button>
+
+        <!-- Result -->
+        <div id="loadingSpinner" class="hidden mt-3 text-blue-400 animate-pulse">Analyzing...</div>
+        <p id="predictionResult" class="text-green-300 mt-4 text-base font-bold hidden"></p>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    function handleImageChange(event) {
+      const fileInput = event.target;
+      const previewImage = document.getElementById("previewImage");
+      const noImageText = document.getElementById("noImageText");
+
+      if (fileInput.files && fileInput.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          previewImage.src = e.target.result;
+          previewImage.classList.remove("hidden");
+          noImageText.classList.add("hidden");
+        };
+        reader.readAsDataURL(fileInput.files[0]);
+      } else {
+        previewImage.src = "";
+        previewImage.classList.add("hidden");
+        noImageText.classList.remove("hidden");
+      }
+    }
+
+    document.getElementById('predictButton').addEventListener('click', function () {
+      const fileInput = document.getElementById('fileInput');
+      const file = fileInput.files[0];
+      const spinner = document.getElementById('loadingSpinner');
+      const predictionResult = document.getElementById('predictionResult');
+
+      if (file) {
+        spinner.classList.remove("hidden");
+        predictionResult.classList.add("hidden");
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        fetch('/prediction', {
+          method: 'POST',
+          body: formData,
+        })
+        .then(response => response.json())
+        .then(data => {
+          spinner.classList.add("hidden");
+          predictionResult.classList.remove("hidden");
+          predictionResult.textContent = 'Your Predicted Blood Group is: ' + data.prediction;
+        })
+        .catch(error => {
+          spinner.classList.add("hidden");
+          console.error('Error:', error);
+          alert("Something went wrong. Please try again.");
+        });
+      } else {
+        alert('Please select an image file.');
+      }
+    });
+
+    lucide.createIcons();
+  </script>
+</body>
+</html>

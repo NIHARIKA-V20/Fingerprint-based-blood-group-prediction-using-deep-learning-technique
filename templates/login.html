@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal Login</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background:  url("{{ url_for('static', filename='finger1.jpg') }}") no-repeat center center / cover;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 0;
+    }
+
+    .login-card {
+      position: relative;
+      width: 100%;
+      max-width: 400px;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+      color: #fff;
+      z-index: 1;
+      text-align: center;
+    }
+
+    .login-card h2 {
+      font-size: 2rem;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+      text-align: left;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #e0e0e0;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 0.8rem;
+      border: none;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      font-size: 1rem;
+    }
+
+    .form-group input::placeholder {
+      color: #b0b0b0;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .login-btn {
+      display: block;
+      width: 100%;
+      padding: 0.8rem;
+      background: #135782;
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 1rem;
+      transition: background 0.3s ease;
+    }
+
+    .login-btn:hover {
+      background: #5b21b6;
+    }
+
+    .signup-link {
+      display: block;
+      text-align: center;
+      margin-top: 1rem;
+      color: #bb86fc;
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+
+    .signup-link:hover {
+      text-decoration: underline;
+    }
+
+    .fingerprint-container {
+      margin: 1.2rem 0;
+      position: relative;
+      display: flex;
+      justify-content: center;
+    }
+
+    .fingerprint-img {
+      width: 100px;
+      height: 100px;
+      object-fit: contain;
+      animation: scan 2.5s infinite ease-in-out;
+      filter: drop-shadow(0 0 6px #bb86fc);
+    }
+
+    @keyframes scan {
+      0%, 100% {
+        transform: translateY(0);
+        filter: drop-shadow(0 0 6px #bb86fc);
+      }
+      50% {
+        transform: translateY(5px);
+        filter: drop-shadow(0 0 16px #bb86fc);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="overlay"></div>
+  <div class="login-card">
+    <h2>BloodPrint Portal</h2>
+    <div class="fingerprint-container">
+      <img src="{{ url_for('static', filename='finger.jpg') }}"  alt="Fingerprint Scan" class="fingerprint-img" />
+    </div>
+    <form id="login-form" method="POST" action="/login">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" placeholder="Enter your email" required />
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" placeholder="Enter your password" required />
+      </div>
+      <button type="submit" class="login-btn">Sign In</button>
+      <a href="/signup" class="signup-link">Don't have an account? Sign up</a>
+    </form>
+  </div>
+</body>
+</html>

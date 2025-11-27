@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Signup Page</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: url("{{ url_for('static', filename='finger1.jpg') }}") center/cover no-repeat;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    body::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 0;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 400px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+      padding: 2rem;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      text-align: center;
+    }
+
+    .container h2 {
+      color: white;
+      font-size: 2rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .container p {
+      color: #d1d5db;
+      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+    }
+
+    .fingerprint-container {
+      margin-bottom: 1rem;
+    }
+
+    .fingerprint-img {
+      width: 90px;
+      height: 90px;
+      animation: scan 2.5s infinite ease-in-out;
+      filter: drop-shadow(0 0 8px #bb86fc);
+    }
+
+    @keyframes scan {
+      0%, 100% {
+        transform: translateY(0);
+        filter: drop-shadow(0 0 6px #bb86fc);
+      }
+      50% {
+        transform: translateY(5px);
+        filter: drop-shadow(0 0 18px #bb86fc);
+      }
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+      text-align: left;
+    }
+
+    .form-group label {
+      color: white;
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      border-radius: 5px;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+    }
+
+    .form-group input:focus {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: #bb86fc;
+      outline: none;
+    }
+
+    .form-group input::placeholder {
+      color: #9ca3af;
+    }
+
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 0.75rem;
+      background: #5b21b6;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .btn:hover {
+      background: #7c3aed;
+    }
+
+    .text {
+      text-align: center;
+      margin-top: 1rem;
+      color: #d1d5db;
+      font-size: 0.9rem;
+    }
+
+    .text a {
+      color: #bb86fc;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .text a:hover {
+      color: #e2bfff;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="fingerprint-container">
+      <img src="{{ url_for('static', filename='finger.jpg') }}" alt="Fingerprint" class="fingerprint-img" />
+    </div>
+    <h2>Create Account</h2>
+    <p>Join BloodPrint Portal Today</p>
+    <form method="POST" action="/signup">
+      <div class="form-group">
+        <label for="name">Full Name</label>
+        <input type="text" id="name" name="username" placeholder="Enter your full name" required />
+      </div>
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" placeholder="Enter your email" required />
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" placeholder="Create a password" required />
+      </div>
+      <button type="submit" class="btn">Create Account</button>
+    </form>
+    <p class="text">Already have an account? <a href="/login">Sign in</a></p>
+  </div>
+</body>
+</html>
